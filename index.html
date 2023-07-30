@@ -1,0 +1,45 @@
+<html>
+<head>
+    <title>Snake Game</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+        canvas {
+            display: block;
+            margin: 0 auto;
+            background-color: #f0f0f0;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="gameCanvas" width="400" height="400">
+        <script>
+            const canvas = document.getElementById('gameCanvas');
+            const ctx = canvas.getContext('2d');
+
+            const gridSize = 20;
+            let snake = [{ x: 200, y: 200}];
+            let direction = 'right';
+            let food = { x: 0, y: 0 };
+
+            function drawSnake() {
+                ctx.fillStyle = 'green';
+                snake.forEach(segment => {
+                    ctx.fillRect(segment.x, segment.y, gridSize, Gridsize);
+                });
+            }
+
+            function drawFood() {
+                ctx.fillStyle = 'red';
+                ctx.fillRect(food.x, food.y, gridSize, gridSize)
+            }
+
+            function moveSnake() {
+                const head = { ...snake[0]}
+            }
+        </script>
+    </canvas> 
+</body>
+</html>
