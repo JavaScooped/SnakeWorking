@@ -1,6 +1,7 @@
+<!DOCTYPE html>
 <html>
 <head>
-    <title>Snake Game</title>
+    <title>Simple Snake Game</title>
     <style>
         body {
             margin: 0;
@@ -14,32 +15,104 @@
     </style>
 </head>
 <body>
-    <canvas id="gameCanvas" width="400" height="400">
-        <script>
-            const canvas = document.getElementById('gameCanvas');
-            const ctx = canvas.getContext('2d');
+    <canvas id="gameCanvas" width="400" height="400"></canvas>
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
 
-            const gridSize = 20;
-            let snake = [{ x: 200, y: 200}];
-            let direction = 'right';
-            let food = { x: 0, y: 0 };
+        const gridSize = 20;
+        let snake = [{ x: 200, y: 200 }];
+        let direction = 'right';
+        let food = { x: 0, y: 0 };
 
-            function drawSnake() {
-                ctx.fillStyle = 'green';
-                snake.forEach(segment => {
-                    ctx.fillRect(segment.x, segment.y, gridSize, Gridsize);
-                });
+        function drawSnake() {
+            ctx.fillStyle = 'green';
+            snake.forEach(segment => {
+                ctx.fillRect(segment.x, segment.y, gridSize, gridSize);
+            });
+        }
+
+        function drawFood() {
+            ctx.fillStyle = 'red';
+            ctx.fillRect(food.x, food.y, gridSize, gridSize);
+        }
+
+        function moveSnake() {
+            const head = { ...snake[0] };
+            switch (direction) {
+                case 'up':
+                    head.y -= gridSize;
+                    break;
+                case 'down':
+                    head.y += gridSize;
+                    break;
+                case 'left':
+                    head.x -= gridSize;
+                    break;
+                case 'right':
+                    head.x += gridSize;
+                    break;
+            }
+            snake.unshift(head);
+
+            // Check if snake eats the food
+            if (head.x === food.x && head.y === food.y) {
+                generateFood();
+            } else {
+                snake.pop();
+            }
+        }
+
+        function generateFood() {
+            food.x = Math.floor(Math.random() * (canvas.width / gridSize)) * gridSize;
+            food.y = Math.floor(Math.random() * (canvas.height / gridSize)) * gridSize;
+
+            // Make sure the food doesn't spawn on the snake
+            snake.forEach(segment => {
+                if (segment.x === food.x && segment.y === food.y) {
+                    generateFood();
+                }
+            });
+        }
+
+        function changeDirection(event) {
+            const key = event.keyCode;
+            if (key === 37 && direction !== 'right') {
+                direction = 'left';
+            } else if (key === 38 && direction !== 'down') {
+                direction = 'up';
+            } else if (key === 39 && direction !== 'left') {
+                direction = 'right';
+            } else if (key === 40 && direction !== 'up') {
+                direction = 'down';
+            }
+        }
+
+        function gameOver() {
+            alert('Game Over! Your score: ' + (snake.length - 1));
+            snake = [{ x: 200, y: 200 }];
+            direction = 'right';
+            generateFood();
+        }
+
+        function gameLoop() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            moveSnake();
+
+            if (snake[0].x < 0 || snake[0].x >= canvas.width || snake[0].y < 0 || snake[0].y >= canvas.height) {
+                gameOver();
+                return;
             }
 
-            function drawFood() {
-                ctx.fillStyle = 'red';
-                ctx.fillRect(food.x, food.y, gridSize, gridSize)
-            }
+            drawFood();
+            drawSnake();
+            setTimeout(gameLoop, 100);
+        }
 
-            function moveSnake() {
-                const head = { ...snake[0]}
-            }
-        </script>
-    </canvas> 
+        // Initialize the game
+        generateFood();
+        document.addEventListener('keydown', changeDirection);
+        gameLoop();
+    </script>
 </body>
 </html>
